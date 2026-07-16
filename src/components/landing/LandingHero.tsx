@@ -3,15 +3,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Search, Mic, Sparkles, ArrowRight, Play, Pause, Volume2, VolumeX, Music2 } from 'lucide-react';
+import { Search, Mic, Sparkles, ArrowRight, Play, Pause, Music2 } from 'lucide-react';
 
 import InteractiveBookshelf from './InteractiveBookshelf';
 
-// Marshmallow by Lukrembo — royalty-free (freetouse.com)
-// Using a publicly accessible CDN-hosted lofi track
 const AUDIO_SRC = 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0c6ff1fdd.mp3';
 const SONG_TITLE = 'Marshmallow';
-const SONG_ARTIST = 'Lukrembo';
 
 export default function LandingHero() {
   const router = useRouter();
@@ -21,48 +18,19 @@ export default function LandingHero() {
   const [waveHeights, setWaveHeights] = useState<number[]>([10, 10, 10, 10, 10]);
   const waveIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Music player state
+  // Music player
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(40);
-  const [musicWave, setMusicWave] = useState<number[]>([4, 8, 12, 8, 4, 10, 6, 14, 8, 5]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const musicAnimRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Init HTML5 audio element
+  // Init audio
   useEffect(() => {
     const audio = new Audio(AUDIO_SRC);
     audio.loop = true;
-    audio.volume = volume / 100;
+    audio.volume = 0.4;
     audio.preload = 'metadata';
     audioRef.current = audio;
-
-    return () => {
-      audio.pause();
-      audio.src = '';
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => { audio.pause(); audio.src = ''; };
   }, []);
-
-  // Sync volume changes
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume / 100;
-    }
-  }, [volume, isMuted]);
-
-  // Animate waveform when playing
-  useEffect(() => {
-    if (isPlaying) {
-      musicAnimRef.current = setInterval(() => {
-        setMusicWave(Array.from({ length: 10 }, () => Math.floor(Math.random() * 18) + 4));
-      }, 180);
-    } else {
-      if (musicAnimRef.current) clearInterval(musicAnimRef.current);
-      setMusicWave([4, 8, 12, 8, 4, 10, 6, 14, 8, 5]);
-    }
-    return () => { if (musicAnimRef.current) clearInterval(musicAnimRef.current); };
-  }, [isPlaying]);
 
   const togglePlay = useCallback(async () => {
     const audio = audioRef.current;
@@ -79,15 +47,6 @@ export default function LandingHero() {
       }
     }
   }, [isPlaying]);
-
-  const toggleMute = useCallback(() => {
-    setIsMuted(prev => !prev);
-  }, []);
-
-  const handleVolumeChange = useCallback((v: number) => {
-    setVolume(v);
-    setIsMuted(false);
-  }, []);
 
   // Voice recognition
   useEffect(() => {
@@ -135,78 +94,36 @@ export default function LandingHero() {
   return (
     <div className="relative z-10 flex flex-col items-center justify-center min-h-full w-full px-4 text-center max-w-4xl mx-auto py-6 h-full">
 
-      {/* ── Floating Music Player ── */}
+      {/* ── Minimal Music Player ── */}
       <div className="fixed top-5 right-5 z-[99999]">
         <motion.div
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ delay: 0.6, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-2.5 pl-3 pr-2.5 py-2 rounded-2xl border border-[#C8B9C8]/40 bg-[#EAE0DA]/85 backdrop-blur-md shadow-[0_4px_24px_rgba(60,45,61,0.15)]"
-          style={{ minWidth: 230 }}
+          className="flex items-center gap-2.5 px-3 py-2 rounded-2xl border border-[#C8B9C8]/40 bg-[#EAE0DA]/85 backdrop-blur-md shadow-[0_4px_24px_rgba(60,45,61,0.12)]"
         >
-          {/* Icon with playing indicator */}
-          <div className="relative shrink-0">
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors duration-300 ${isPlaying ? 'bg-[#867086]' : 'bg-[#C8B9C8]/50'}`}>
-              <Music2 size={14} className="text-white" />
-            </div>
-            {isPlaying && (
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#10B981] border-[1.5px] border-[#EAE0DA] animate-pulse" />
-            )}
+          {/* Music icon */}
+          <div className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors duration-300 ${isPlaying ? 'bg-[#867086]' : 'bg-[#C8B9C8]/50'}`}>
+            <Music2 size={13} className="text-white" />
           </div>
 
-          {/* Song info + waveform */}
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-mono text-[#3C2D3D] font-bold truncate leading-tight">{SONG_TITLE}</p>
-            <p className="text-[9px] font-mono text-[#867086] truncate leading-tight">{SONG_ARTIST}</p>
-            <div className="flex items-end gap-[2px] mt-1 h-3">
-              {musicWave.map((h, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ height: isPlaying ? h : 3 }}
-                  transition={{ duration: 0.18 }}
-                  className="w-[2px] rounded-full bg-[#867086]"
-                  style={{ minHeight: 3 }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Volume */}
-          <div className="flex items-center gap-1 shrink-0">
-            <button
-              onClick={toggleMute}
-              className="p-1 rounded-lg hover:bg-[#D8C8D0]/60 text-[#6A5A6A] transition-colors cursor-pointer"
-              title={isMuted ? 'Unmute' : 'Mute'}
-            >
-              {isMuted || volume === 0 ? <VolumeX size={11} /> : <Volume2 size={11} />}
-            </button>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={isMuted ? 0 : volume}
-              onChange={(e) => handleVolumeChange(Number(e.target.value))}
-              className="w-14 h-1 accent-[#867086] cursor-pointer"
-            />
-          </div>
+          {/* Song title */}
+          <span className="text-[11px] font-mono font-semibold text-[#3C2D3D] tracking-wide">
+            {SONG_TITLE}
+          </span>
 
           {/* Play / Pause */}
           <button
             onClick={togglePlay}
-            className="w-8 h-8 rounded-xl bg-[#3C2D3D] hover:bg-[#4C3D4D] text-[#FFFBE9] flex items-center justify-center shrink-0 transition-all cursor-pointer shadow-sm"
+            className="w-8 h-8 rounded-xl bg-[#3C2D3D] hover:bg-[#4C3D4D] text-[#FFFBE9] flex items-center justify-center transition-all cursor-pointer shadow-sm"
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying
-              ? <Pause size={13} />
-              : <Play size={13} style={{ marginLeft: 1 }} />
+              ? <Pause size={12} />
+              : <Play size={12} style={{ marginLeft: 1 }} />
             }
           </button>
         </motion.div>
-
-        {/* Attribution (required by freetouse.com license) */}
-        <p className="text-[8px] font-mono text-[#948979]/80 text-center mt-1">
-          {SONG_ARTIST} · freetouse.com
-        </p>
       </div>
 
       {/* Top Banner */}
@@ -226,7 +143,7 @@ export default function LandingHero() {
         transition={{ duration: 1, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
         className="text-4xl md:text-5xl font-display font-bold tracking-tight text-[#3C2D3D]"
       >
-        Intelli<span className="text-[#867086] font-extrabold bg-gradient-to-r from-[#867086] to-[#B294A6] bg-clip-text text-transparent">Shelf</span>
+        Intelli<span className="font-extrabold bg-gradient-to-r from-[#867086] to-[#B294A6] bg-clip-text text-transparent">Shelf</span>
       </motion.h1>
 
       <motion.p
@@ -299,7 +216,7 @@ export default function LandingHero() {
         )}
       </AnimatePresence>
 
-      {/* AI Status Message */}
+      {/* AI Status */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
