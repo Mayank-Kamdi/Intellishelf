@@ -295,18 +295,41 @@ export const INITIAL_OVERDUE: OverdueItem[] = [
   }
 ];
 
-// LocalStorage helpers with hydration fallback
+// LocalStorage helpers with hydration fallback (Optimized to save availability delta to avoid QuotaExceededError)
 export function getStoredBooks(): Book[] {
   if (typeof window === 'undefined') return INITIAL_BOOKS;
-  const stored = localStorage.getItem('libraryverse_books');
-  if (stored) return JSON.parse(stored);
-  localStorage.setItem('libraryverse_books', JSON.stringify(INITIAL_BOOKS));
+  const storedAvailability = localStorage.getItem('libraryverse_book_availability');
+  if (storedAvailability) {
+    try {
+      const availabilityMap = JSON.parse(storedAvailability);
+      return INITIAL_BOOKS.map(book => ({
+        ...book,
+        available: availabilityMap[book.id] !== undefined ? availabilityMap[book.id] : book.available
+      }));
+    } catch (e) {
+      console.error("Failed to parse book availability", e);
+    }
+  }
   return INITIAL_BOOKS;
 }
 
 export function saveBooks(books: Book[]) {
   if (typeof window !== 'undefined') {
-    localStorage.setItem('libraryverse_books', JSON.stringify(books));
+    const availabilityMap: Record<string, boolean> = {};
+    books.forEach(book => {
+      // Find default availability in INITIAL_BOOKS
+      const original = INITIAL_BOOKS.find(b => b.id === book.id);
+      if (original && original.available !== book.available) {
+        availabilityMap[book.id] = book.available;
+      }
+    });
+    try {
+      localStorage.setItem('libraryverse_book_availability', JSON.stringify(availabilityMap));
+      // Clean up legacy heavy key if present
+      localStorage.removeItem('libraryverse_books');
+    } catch (e) {
+      console.warn("Storage quota warning: failed to write book availability.", e);
+    }
   }
 }
 
