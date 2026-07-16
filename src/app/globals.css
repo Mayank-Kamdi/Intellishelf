@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+:root {
+  --background: #DFD0B8;      /* Warm beige/sand */
+  --foreground: #222831;      /* Deep dark slate */
+  --card: #EADCB9;            /* Slightly lighter warm sand for cards */
+  --sidebar: #393E46;         /* Medium dark slate for sidebar */
+  --primary: #222831;         /* Primary brand color */
+  --secondary: #393E46;       /* Secondary brand color */
+  --accent: #948979;          /* Accent gold-taupe */
+  --success: #3f6154;         /* Readability-enhanced success */
+  --warning: #CFA070;
+  --danger: #BF6B6B;
+}
+
+@theme {
+  --font-sans: var(--font-space-grotesk), sans-serif;
+  --font-display: var(--font-space-grotesk), sans-serif;
+}
+
+body {
+  background-color: #FFFBE9;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Neumorphic container */
+.neu-container {
+  background-color: var(--background);
+  border-radius: 32px;
+  box-shadow: 20px 20px 60px rgba(78, 64, 78, 0.25), -20px -20px 60px rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+}
+
+/* Neumorphic Outset Panel */
+.glass-panel, .glass-card {
+  background-color: #EADFD8;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 4px 4px 12px rgba(163, 145, 134, 0.35), -4px -4px 12px rgba(255, 255, 255, 0.85);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  box-shadow: 6px 6px 18px rgba(163, 145, 134, 0.45), -6px -6px 18px rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+}
+
+/* Neumorphic Inset Input */
+.glass-input {
+  background: #E5DAD2;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 18px;
+  box-shadow: inset 2px 2px 5px rgba(163, 145, 134, 0.35), inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease-in-out;
+  color: var(--foreground);
+}
+
+.glass-input:focus {
+  background: #E0D4CB;
+  box-shadow: inset 3px 3px 6px rgba(163, 145, 134, 0.4), inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+  outline: none;
+}
+
+/* Neumorphic Outset Button */
+.btn-neu {
+  background: #EADFD8;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 3px 3px 8px rgba(163, 145, 134, 0.35), -3px -3px 8px rgba(255, 255, 255, 0.85);
+  transition: all 0.2s ease;
+}
+
+.btn-neu:active {
+  box-shadow: inset 2px 2px 5px rgba(163, 145, 134, 0.4), inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+}
+
+/* Hide scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Orb Waves Animation (adapted for light theme) */
+@keyframes orb-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1) blur(2px);
+  }
+  50% {
+    transform: scale(1.06) rotate(180deg);
+    filter: brightness(1.1) blur(4px);
+  }
+}
+
+.orb-animate {
+  animation: orb-pulse 8s infinite linear;
+}
