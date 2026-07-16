@@ -39,10 +39,10 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [stepIdx, setStepIdx] = useState(-1) // Start at -1 for the initial 300ms delay
 
   useEffect(() => {
-    // Initial 300ms pause before showing the first message
+    // Initial 150ms pause before showing the first message
     const initialTimer = setTimeout(() => {
       setStepIdx(0)
-    }, 300)
+    }, 150)
 
     return () => clearTimeout(initialTimer)
   }, [])
@@ -50,8 +50,8 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   useEffect(() => {
     if (stepIdx < 0 || stepIdx >= steps.length) return
 
-    // 2.5s (2500ms) for steps 0, 1, 2, and 3.0s (3000ms) for step 3
-    const delay = stepIdx === steps.length - 1 ? 3000 : 2500
+    // 1.2s for steps 0–2, 1.5s for last step
+    const delay = stepIdx === steps.length - 1 ? 1500 : 1200
 
     const transitionTimer = setTimeout(() => {
       if (stepIdx < steps.length - 1) {
