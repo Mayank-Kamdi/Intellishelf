@@ -27,7 +27,7 @@ export const INITIAL_PROFILE: UserProfile = {
   initials: 'MK'
 };
 
-export const INITIAL_BOOKS: Book[] = [
+const TEMP_INITIAL_BOOKS: Book[] = [
   {
     id: '1',
     title: 'Atomic Habits',
@@ -161,6 +161,93 @@ export const INITIAL_BOOKS: Book[] = [
     summary: 'Zero to One presents a provocative, contrarian philosophy on entrepreneurship. Peter Thiel argues that creating something brand new ("0 to 1") is far more impactful than copying existing items ("1 to n"). He illustrates how startups must build technology monopolies to escape raw competition and secure long-term value.'
   }
 ];
+
+// Dynamic generator function to scale database to 10,000+ books
+function generateMoreBooks(initialList: Book[]): Book[] {
+  const categories = [
+    'Programming',
+    'Artificial Intelligence',
+    'Psychology',
+    'History',
+    'Business',
+    'Science',
+    'Engineering'
+  ];
+  
+  const techColors = [
+    '#3B82F6', '#8B5CF6', '#EF4444', '#EAB308', 
+    '#10B981', '#EC4899', '#F97316', '#22D3EE', 
+    '#14B8A6', '#6366F1'
+  ];
+
+  const subjects = [
+    'Advanced', 'Foundations of', 'Introduction to', 'Mastering',
+    'Principles of', 'Guide to', 'The Art of', 'Exploring'
+  ];
+  const topics = [
+    'Quantum Computing', 'Data Structuring', 'Distributed Systems', 'Parallel Architectures',
+    'Behavioral Economics', 'Stochastic Systems', 'Microservices Scaling', 'Astrophysics',
+    'Nanotechnology', 'Evolutionary Genetics', 'Thermodynamics', 'Medieval Warfare',
+    'Cognitive Bias', 'Neuromorphic Hardware', 'Statistical Learning', 'Reinforcement Learning'
+  ];
+  const suffixes = [
+    'Vol 1', 'Vol 2', 'Handbook', 'Primer', 'Manual', 'Compendium', 'Digest'
+  ];
+
+  const authors = [
+    'A. Turing', 'N. Chomsky', 'R. Feynman', 'A. Lovelace', 'C. Shannon', 'D. Knuth',
+    'G. Hinton', 'Y. LeCun', 'J. Pearl', 'H. Simon', 'M. Minsky', 'J. McCarthy'
+  ];
+
+  const publishers = [
+    'MIT Press', 'Cambridge University Press', 'Oxford Press', 'Springer Nature',
+    'O\'Reilly Media', 'Addison-Wesley', 'No Starch Press', 'Prentice Hall'
+  ];
+
+  const difficulties = ['Beginner', 'Intermediate', 'Advanced'] as const;
+
+  const result = [...initialList];
+  
+  for (let i = result.length + 1; i <= 10050; i++) {
+    const category = categories[i % categories.length];
+    const sub = subjects[i % subjects.length];
+    const topic = topics[(i * 3) % topics.length];
+    const suffix = suffixes[i % suffixes.length];
+    const title = `${sub} ${topic} (${suffix})`;
+    const author = authors[(i * 7) % authors.length];
+    const coverColor = techColors[i % techColors.length];
+    const difficulty = difficulties[i % difficulties.length];
+    const pages = 150 + (i % 850);
+    const readTime = `${Math.round(pages / 50)} hours`;
+
+    result.push({
+      id: String(i),
+      title,
+      author,
+      coverColor,
+      rating: parseFloat((4.0 + (i % 10) / 10).toFixed(1)),
+      available: i % 7 !== 0,
+      shelfLocation: `Shelf ${category.slice(0, 3)}-${(i % 10) + 1}`,
+      shelfIndex: i % 4,
+      bookIndex: i % 8,
+      pages,
+      difficulty,
+      readTime,
+      prerequisites: ['None'],
+      description: `A comprehensive scholarly work exploring the modern frontiers of ${topic}. Specifically curated for researchers.`,
+      whoShouldRead: ['Scholars', 'Researchers', 'Enthusiasts'],
+      publisher: publishers[i % publishers.length],
+      category,
+      borrowedCount: i % 200,
+      popularityScore: 50 + (i % 50),
+      summary: `This text covers the historical progression, current state-of-the-art methodology, and future paradigms of ${topic}. It details core research architectures, practical implementation algorithms, and theoretical case studies to establish comprehensive mastery.`
+    });
+  }
+  return result;
+}
+
+export const INITIAL_BOOKS: Book[] = generateMoreBooks(TEMP_INITIAL_BOOKS);
+
 
 export const INITIAL_STATS: UserStats = {
   xp: 1450,
