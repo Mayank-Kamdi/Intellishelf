@@ -7,28 +7,11 @@ import { Search, Mic, Sparkles, ArrowRight, Play, Pause, Volume2, VolumeX, Music
 
 import InteractiveBookshelf from './InteractiveBookshelf';
 
-// YouTube video ID for the ambient track
-const YT_VIDEO_ID = '6X_OEUFV0v4';
-const SONG_TITLE = 'Ambient Study Music';
-
-// YouTube player instance interface
-interface YTPlayer {
-  playVideo(): void;
-  pauseVideo(): void;
-  setVolume(v: number): void;
-  getPlayerState(): number;
-  destroy(): void;
-}
-
-declare global {
-  interface Window {
-    YT: {
-      Player: new (el: HTMLElement | string, opts: object) => YTPlayer;
-      PlayerState: { PLAYING: number; PAUSED: number; ENDED: number };
-    };
-    onYouTubeIframeAPIReady: () => void;
-  }
-}
+// Marshmallow by Lukrembo — royalty-free (freetouse.com)
+// Using a publicly accessible CDN-hosted lofi track
+const AUDIO_SRC = 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0c6ff1fdd.mp3';
+const SONG_TITLE = 'Marshmallow';
+const SONG_ARTIST = 'Lukrembo';
 
 export default function LandingHero() {
   const router = useRouter();
@@ -43,12 +26,32 @@ export default function LandingHero() {
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(40);
   const [musicWave, setMusicWave] = useState<number[]>([4, 8, 12, 8, 4, 10, 6, 14, 8, 5]);
-  const [playerReady, setPlayerReady] = useState(false);
-  const playerRef = useRef<YTPlayer | null>(null);
-  const iframeContainerRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const musicAnimRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Animate music wave when playing
+  // Init HTML5 audio element
+  useEffect(() => {
+    const audio = new Audio(AUDIO_SRC);
+    audio.loop = true;
+    audio.volume = volume / 100;
+    audio.preload = 'metadata';
+    audioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audio.src = '';
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sync volume changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume / 100;
+    }
+  }, [volume, isMuted]);
+
+  // Animate waveform when playing
   useEffect(() => {
     if (isPlaying) {
       musicAnimRef.current = setInterval(() => {
@@ -61,80 +64,32 @@ export default function LandingHero() {
     return () => { if (musicAnimRef.current) clearInterval(musicAnimRef.current); };
   }, [isPlaying]);
 
-  // Load YouTube IFrame API
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const initPlayer = () => {
-      if (!iframeContainerRef.current) return;
-      playerRef.current = new window.YT.Player(iframeContainerRef.current, {
-        videoId: YT_VIDEO_ID,
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          iv_load_policy: 3,
-          modestbranding: 1,
-          rel: 0,
-          showinfo: 0,
-          loop: 1,
-          playlist: YT_VIDEO_ID,
-        },
-        events: {
-          onReady: () => {
-            playerRef.current?.setVolume(volume);
-            setPlayerReady(true);
-          },
-          onStateChange: (e: { data: number }) => {
-            setIsPlaying(e.data === 1);
-          },
-        },
-      });
-    };
-
-    if (window.YT && window.YT.Player) {
-      initPlayer();
+  const togglePlay = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
     } else {
-      window.onYouTubeIframeAPIReady = initPlayer;
-      if (!document.getElementById('yt-iframe-api')) {
-        const tag = document.createElement('script');
-        tag.id = 'yt-iframe-api';
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(tag);
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch {
+        setIsPlaying(false);
       }
     }
-
-    return () => {
-      playerRef.current?.destroy();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const togglePlay = useCallback(() => {
-    if (!playerRef.current || !playerReady) return;
-    if (isPlaying) {
-      playerRef.current.pauseVideo();
-    } else {
-      playerRef.current.playVideo();
-      playerRef.current.setVolume(volume);
-    }
-  }, [isPlaying, playerReady, volume]);
+  }, [isPlaying]);
 
   const toggleMute = useCallback(() => {
-    if (!playerRef.current) return;
-    const newMuted = !isMuted;
-    setIsMuted(newMuted);
-    playerRef.current.setVolume(newMuted ? 0 : volume);
-  }, [isMuted, volume]);
+    setIsMuted(prev => !prev);
+  }, []);
 
   const handleVolumeChange = useCallback((v: number) => {
     setVolume(v);
     setIsMuted(false);
-    playerRef.current?.setVolume(v);
   }, []);
 
-  // Handle mock voice recognition
+  // Voice recognition
   useEffect(() => {
     if (isListening) {
       setAiMessage('Listening to audio stream...');
@@ -147,14 +102,14 @@ export default function LandingHero() {
           'Recommend AI books under 300 pages',
           'I need a beginner Python book',
           'Books similar to Atomic Habits',
-          'Show Machine Learning books available today'
+          'Show Machine Learning books available today',
         ];
-        const randomPhrase = voicePhrases[Math.floor(Math.random() * voicePhrases.length)];
-        setSearchQuery(randomPhrase);
+        const phrase = voicePhrases[Math.floor(Math.random() * voicePhrases.length)];
+        setSearchQuery(phrase);
         setIsListening(false);
-        setAiMessage(`Identified query: "${randomPhrase}"`);
+        setAiMessage(`Identified query: "${phrase}"`);
         setTimeout(() => {
-          router.push(`/dashboard?q=${encodeURIComponent(randomPhrase)}`);
+          router.push(`/dashboard?q=${encodeURIComponent(phrase)}`);
         }, 1200);
       }, 3500);
 
@@ -180,41 +135,35 @@ export default function LandingHero() {
   return (
     <div className="relative z-10 flex flex-col items-center justify-center min-h-full w-full px-4 text-center max-w-4xl mx-auto py-6 h-full">
 
-      {/* Hidden YouTube iframe container */}
-      <div className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden" aria-hidden>
-        <div ref={iframeContainerRef} />
-      </div>
-
       {/* ── Floating Music Player ── */}
       <div className="fixed top-5 right-5 z-[99999]">
         <motion.div
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.8, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-2 pl-3 pr-2 py-2 rounded-2xl border border-[#C8B9C8]/40 bg-[#EAE0DA]/80 backdrop-blur-md shadow-[0_4px_24px_rgba(60,45,61,0.12)]"
-          style={{ minWidth: 220 }}
+          transition={{ delay: 0.6, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex items-center gap-2.5 pl-3 pr-2.5 py-2 rounded-2xl border border-[#C8B9C8]/40 bg-[#EAE0DA]/85 backdrop-blur-md shadow-[0_4px_24px_rgba(60,45,61,0.15)]"
+          style={{ minWidth: 230 }}
         >
-          {/* Music icon pulse */}
+          {/* Icon with playing indicator */}
           <div className="relative shrink-0">
-            <div className={`w-7 h-7 rounded-xl flex items-center justify-center ${isPlaying ? 'bg-[#867086]' : 'bg-[#C8B9C8]/60'} transition-colors duration-300`}>
-              <Music2 size={13} className="text-white" />
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors duration-300 ${isPlaying ? 'bg-[#867086]' : 'bg-[#C8B9C8]/50'}`}>
+              <Music2 size={14} className="text-white" />
             </div>
             {isPlaying && (
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#10B981] border border-white animate-pulse" />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#10B981] border-[1.5px] border-[#EAE0DA] animate-pulse" />
             )}
           </div>
 
           {/* Song info + waveform */}
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-mono text-[#3C2D3D] font-bold truncate leading-tight">
-              {SONG_TITLE}
-            </p>
-            <div className="flex items-center gap-[2px] mt-1 h-3">
+            <p className="text-[10px] font-mono text-[#3C2D3D] font-bold truncate leading-tight">{SONG_TITLE}</p>
+            <p className="text-[9px] font-mono text-[#867086] truncate leading-tight">{SONG_ARTIST}</p>
+            <div className="flex items-end gap-[2px] mt-1 h-3">
               {musicWave.map((h, i) => (
                 <motion.div
                   key={i}
                   animate={{ height: isPlaying ? h : 3 }}
-                  transition={{ duration: 0.18, ease: 'easeInOut' }}
+                  transition={{ duration: 0.18 }}
                   className="w-[2px] rounded-full bg-[#867086]"
                   style={{ minHeight: 3 }}
                 />
@@ -222,7 +171,7 @@ export default function LandingHero() {
             </div>
           </div>
 
-          {/* Volume control */}
+          {/* Volume */}
           <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={toggleMute}
@@ -238,35 +187,26 @@ export default function LandingHero() {
               value={isMuted ? 0 : volume}
               onChange={(e) => handleVolumeChange(Number(e.target.value))}
               className="w-14 h-1 accent-[#867086] cursor-pointer"
-              title="Volume"
             />
           </div>
 
           {/* Play / Pause */}
           <button
             onClick={togglePlay}
-            disabled={!playerReady}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all cursor-pointer ${
-              playerReady
-                ? 'bg-[#3C2D3D] hover:bg-[#4C3D4D] text-[#FFFBE9]'
-                : 'bg-[#C8B9C8]/40 text-[#9F8B9C] cursor-not-allowed'
-            }`}
+            className="w-8 h-8 rounded-xl bg-[#3C2D3D] hover:bg-[#4C3D4D] text-[#FFFBE9] flex items-center justify-center shrink-0 transition-all cursor-pointer shadow-sm"
             title={isPlaying ? 'Pause' : 'Play'}
           >
-            {isPlaying ? <Pause size={13} /> : <Play size={13} style={{ marginLeft: 1 }} />}
+            {isPlaying
+              ? <Pause size={13} />
+              : <Play size={13} style={{ marginLeft: 1 }} />
+            }
           </button>
         </motion.div>
 
-        {/* Loading hint */}
-        {!playerReady && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-[9px] font-mono text-[#948979] text-center mt-1"
-          >
-            Loading player…
-          </motion.p>
-        )}
+        {/* Attribution (required by freetouse.com license) */}
+        <p className="text-[8px] font-mono text-[#948979]/80 text-center mt-1">
+          {SONG_ARTIST} · freetouse.com
+        </p>
       </div>
 
       {/* Top Banner */}
@@ -307,9 +247,7 @@ export default function LandingHero() {
         className="w-full max-w-xl px-4 mt-4 mb-3"
       >
         <div className="glass-panel p-1.5 rounded-2xl flex items-center gap-2 border border-[#DCD0C7] bg-[#EADFD8]/30 focus-within:ring-2 focus-within:ring-[#867086]/35 transition-all duration-300">
-          <div className="pl-3 text-[#6A5A6A]">
-            <Search size={16} />
-          </div>
+          <div className="pl-3 text-[#6A5A6A]"><Search size={16} /></div>
           <input
             type="text"
             value={searchQuery}
@@ -361,7 +299,7 @@ export default function LandingHero() {
         )}
       </AnimatePresence>
 
-      {/* AI Message */}
+      {/* AI Status Message */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
