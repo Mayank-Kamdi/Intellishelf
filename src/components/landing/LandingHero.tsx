@@ -1,14 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Search, Mic, Sparkles, ArrowRight, Play, Pause, Music2 } from 'lucide-react';
+import { Search, Mic, Sparkles, ArrowRight } from 'lucide-react';
 
 import InteractiveBookshelf from './InteractiveBookshelf';
-
-const AUDIO_SRC = 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0c6ff1fdd.mp3';
-const SONG_TITLE = 'Marshmallow';
 
 export default function LandingHero() {
   const router = useRouter();
@@ -17,36 +14,6 @@ export default function LandingHero() {
   const [aiMessage, setAiMessage] = useState('Welcome, Scholar. What knowledge do you seek today?');
   const [waveHeights, setWaveHeights] = useState<number[]>([10, 10, 10, 10, 10]);
   const waveIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Music player
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Init audio
-  useEffect(() => {
-    const audio = new Audio(AUDIO_SRC);
-    audio.loop = true;
-    audio.volume = 0.4;
-    audio.preload = 'metadata';
-    audioRef.current = audio;
-    return () => { audio.pause(); audio.src = ''; };
-  }, []);
-
-  const togglePlay = useCallback(async () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      try {
-        await audio.play();
-        setIsPlaying(true);
-      } catch {
-        setIsPlaying(false);
-      }
-    }
-  }, [isPlaying]);
 
   // Voice recognition
   useEffect(() => {
@@ -93,38 +60,6 @@ export default function LandingHero() {
 
   return (
     <div className="relative z-10 flex flex-col items-center justify-center min-h-full w-full px-4 text-center max-w-4xl mx-auto py-6 h-full">
-
-      {/* ── Minimal Music Player ── */}
-      <div className="fixed top-5 right-5 z-[99999]">
-        <motion.div
-          initial={{ opacity: 0, y: -10, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-2.5 px-3 py-2 rounded-2xl border border-[#C8B9C8]/40 bg-[#EAE0DA]/85 backdrop-blur-md shadow-[0_4px_24px_rgba(60,45,61,0.12)]"
-        >
-          {/* Music icon */}
-          <div className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors duration-300 ${isPlaying ? 'bg-[#867086]' : 'bg-[#C8B9C8]/50'}`}>
-            <Music2 size={13} className="text-white" />
-          </div>
-
-          {/* Song title */}
-          <span className="text-[11px] font-mono font-semibold text-[#3C2D3D] tracking-wide">
-            {SONG_TITLE}
-          </span>
-
-          {/* Play / Pause */}
-          <button
-            onClick={togglePlay}
-            className="w-8 h-8 rounded-xl bg-[#3C2D3D] hover:bg-[#4C3D4D] text-[#FFFBE9] flex items-center justify-center transition-all cursor-pointer shadow-sm"
-            title={isPlaying ? 'Pause' : 'Play'}
-          >
-            {isPlaying
-              ? <Pause size={12} />
-              : <Play size={12} style={{ marginLeft: 1 }} />
-            }
-          </button>
-        </motion.div>
-      </div>
 
       {/* Top Banner */}
       <motion.div
