@@ -117,12 +117,12 @@ export default function BookDetailsModal({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto glass-panel rounded-3xl p-6 md:p-8 flex flex-col gap-6 no-scrollbar"
+          className="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-[#EADCB9] border border-white/30 rounded-3xl p-6 md:p-8 flex flex-col gap-6 no-scrollbar shadow-xl"
         >
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 p-2 rounded-xl bg-zinc-900/60 border border-white/5 text-zinc-400 hover:text-white transition-all z-10"
+            className="absolute top-6 right-6 p-2 rounded-xl bg-[#DFD0B8] border border-[#948979]/30 text-[#393E46] hover:text-[#222831] transition-all z-10 cursor-pointer shadow-sm"
           >
             <X size={16} />
           </button>
@@ -131,15 +131,15 @@ export default function BookDetailsModal({
             
             {/* Book Cover and Quick Info */}
             <div className="md:col-span-4 flex flex-col gap-4">
-              <div className="relative aspect-[3/4.2] rounded-2xl overflow-hidden p-[1px] bg-white/5">
+              <div className="relative aspect-[3/4.2] rounded-2xl overflow-hidden p-[1px] bg-white/10 shadow-md">
                 <div 
                   className="w-full h-full rounded-[15px] flex flex-col justify-between p-6 relative overflow-hidden"
-                  style={{ background: `linear-gradient(135deg, ${book.coverColor}dd, #09090b)` }}
+                  style={{ background: `linear-gradient(135deg, ${book.coverColor}dd, #1a1e24)` }}
                 >
                   <div className="absolute inset-0 bg-radial-at-t from-white/10 to-transparent pointer-events-none" />
                   
                   {/* Holographic glowing label */}
-                  <div className="self-end px-2.5 py-1 rounded bg-black/30 border border-white/10 text-[9px] font-mono text-white/80 uppercase tracking-widest">
+                  <div className="self-end px-2.5 py-1 rounded bg-black/35 border border-white/15 text-[9px] font-mono text-white/95 uppercase tracking-widest font-bold">
                     {book.category}
                   </div>
                   
@@ -147,22 +147,22 @@ export default function BookDetailsModal({
                     <h2 className="text-xl md:text-2xl font-display font-bold text-white drop-shadow-md leading-tight">
                       {book.title}
                     </h2>
-                    <p className="text-xs font-mono text-zinc-300 drop-shadow">By {book.author}</p>
+                    <p className="text-xs font-mono text-zinc-200 drop-shadow">By {book.author}</p>
                   </div>
                 </div>
               </div>
 
               {/* Status Spec */}
               <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                <div className="p-3 rounded-xl bg-zinc-900/40 border border-white/5 text-center">
-                  <span className="text-zinc-500 block mb-1">Status</span>
-                  <span className={book.available ? 'text-emerald-400' : 'text-rose-400'}>
+                <div className="p-3 rounded-xl bg-[#DFD0B8]/60 border border-[#948979]/20 text-center shadow-sm">
+                  <span className="text-[#393E46] block mb-1 font-bold">Status</span>
+                  <span className={book.available ? 'text-emerald-700 font-extrabold' : 'text-rose-600 font-extrabold'}>
                     {book.available ? 'AVAILABLE' : 'RESERVED'}
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-zinc-900/40 border border-white/5 text-center">
-                  <span className="text-zinc-500 block mb-1">Index Location</span>
-                  <span className="text-blue-400">{book.shelfLocation}</span>
+                <div className="p-3 rounded-xl bg-[#DFD0B8]/60 border border-[#948979]/20 text-center shadow-sm">
+                  <span className="text-[#393E46] block mb-1 font-bold">Index Location</span>
+                  <span className="text-blue-700 font-extrabold">{book.shelfLocation}</span>
                 </div>
               </div>
 
@@ -171,10 +171,10 @@ export default function BookDetailsModal({
                 <button
                   disabled={!book.available}
                   onClick={handleReserve}
-                  className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all ${
+                  className={`w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     book.available
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-[0_4px_20px_rgba(59,130,246,0.35)]'
-                      : 'bg-zinc-800 text-zinc-500 border border-zinc-700/50 cursor-not-allowed'
+                      ? 'bg-[#393E46] hover:bg-[#222831] text-white shadow-md'
+                      : 'bg-[#DFD0B8] text-[#948979] border border-[#948979]/25 cursor-not-allowed'
                   }`}
                 >
                   <Sparkles size={16} />
@@ -183,7 +183,7 @@ export default function BookDetailsModal({
 
                 <button
                   onClick={() => setIsPreviewing(!isPreviewing)}
-                  className="w-full py-2.5 rounded-xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/30 hover:bg-zinc-900/60 text-zinc-300 text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-xl border border-[#948979]/30 hover:border-[#948979]/50 bg-[#DFD0B8]/40 hover:bg-[#DFD0B8]/70 text-[#393E46] hover:text-[#222831] text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                 >
                   <BookOpen size={14} />
                   <span>{isPreviewing ? 'Close Digital Preview' : 'Flip Open Preview'}</span>
@@ -201,20 +201,20 @@ export default function BookDetailsModal({
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="p-5 rounded-2xl bg-zinc-950/80 border border-blue-500/20 glow-primary relative"
+                    className="p-5 rounded-2xl bg-[#DFD0B8]/80 border border-[#948979]/30 relative shadow-sm"
                   >
                     <div className="flex justify-between items-center mb-3">
-                      <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">Digital Preview Page 1-2</span>
-                      <span className="text-[10px] text-zinc-500">Press Preview button to close</span>
+                      <span className="text-xs font-mono text-[#393E46] uppercase tracking-widest font-bold">Digital Preview Page 1-2</span>
+                      <span className="text-[10px] text-[#393E46]">Press Preview button to close</span>
                     </div>
                     {/* Simulated page flip content */}
-                    <div className="grid grid-cols-2 gap-4 text-xs leading-relaxed text-zinc-400 font-serif p-3 bg-zinc-900/50 rounded-xl">
-                      <div className="border-r border-white/5 pr-4">
-                        <h4 className="font-display font-bold text-zinc-200 mb-2">CHAPTER ONE</h4>
+                    <div className="grid grid-cols-2 gap-4 text-xs leading-relaxed text-[#393E46] font-serif p-3 bg-[#EADCB9]/60 rounded-xl">
+                      <div className="border-r border-[#948979]/20 pr-4">
+                        <h4 className="font-display font-bold text-[#222831] mb-2">CHAPTER ONE</h4>
                         <p>In the digital age, understanding structured systems of habits governs outcome curves. The compounding changes made by one percent shifts are often visually undetectable on a day-to-day timeline, yet result in astronomical transformations when evaluated over longer intervals...</p>
                       </div>
                       <div className="pl-2">
-                        <h4 className="font-display font-bold text-zinc-200 mb-2">CHAPTER TWO</h4>
+                        <h4 className="font-display font-bold text-[#222831] mb-2">CHAPTER TWO</h4>
                         <p>Systems over goals. When you prioritize the target, you build short-term sprint capacity, but lack structural stability once the marker is reached. To develop sustainable, lifelong momentum, one must design feedback loops that make execution permanent...</p>
                       </div>
                     </div>
@@ -224,42 +224,42 @@ export default function BookDetailsModal({
 
               {/* Main Info */}
               <div>
-                <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest">{book.publisher}</span>
-                <h1 className="text-3xl font-display font-bold text-white mt-1">{book.title}</h1>
-                <p className="text-sm text-zinc-400 mt-2">{book.description}</p>
+                <span className="text-xs font-mono text-[#393E46] uppercase tracking-widest font-bold">{book.publisher}</span>
+                <h1 className="text-3xl font-display font-bold text-[#222831] mt-1">{book.title}</h1>
+                <p className="text-sm text-[#393E46] mt-2 leading-relaxed">{book.description}</p>
               </div>
 
               {/* AI Assistant Section */}
-              <div className="p-5 rounded-2xl bg-blue-950/15 border border-blue-500/10 flex flex-col gap-4">
+              <div className="p-5 rounded-2xl bg-[#948979]/15 border border-[#948979]/25 flex flex-col gap-4 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-cyan-400" />
-                  <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">JARVIS Summary Analysis</h3>
+                  <Sparkles size={16} className="text-[#393E46]" />
+                  <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#222831]">JARVIS Summary Analysis</h3>
                 </div>
                 
-                <p className="text-xs text-zinc-300 leading-relaxed font-sans">{book.summary}</p>
+                <p className="text-xs text-[#393E46] leading-relaxed font-sans">{book.summary}</p>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-white/5 pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-[#948979]/20 pt-4">
                   <div className="text-left">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase">Difficulty level</span>
-                    <p className="text-xs font-medium text-zinc-200 mt-0.5">{book.difficulty}</p>
+                    <span className="text-[10px] font-mono text-[#393E46] uppercase font-bold">Difficulty level</span>
+                    <p className="text-xs font-bold text-[#222831] mt-0.5">{book.difficulty}</p>
                   </div>
                   <div className="text-left">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase">Est. Reading Time</span>
-                    <p className="text-xs font-medium text-zinc-200 mt-0.5">{book.readTime}</p>
+                    <span className="text-[10px] font-mono text-[#393E46] uppercase font-bold">Est. Reading Time</span>
+                    <p className="text-xs font-bold text-[#222831] mt-0.5">{book.readTime}</p>
                   </div>
                   <div className="text-left">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase">Prerequisites</span>
-                    <p className="text-xs font-medium text-zinc-200 mt-0.5 truncate">{book.prerequisites.join(', ')}</p>
+                    <span className="text-[10px] font-mono text-[#393E46] uppercase font-bold">Prerequisites</span>
+                    <p className="text-xs font-bold text-[#222831] mt-0.5 truncate">{book.prerequisites.join(', ')}</p>
                   </div>
                 </div>
               </div>
 
               {/* Who should read */}
               <div>
-                <h4 className="text-xs font-mono text-zinc-400 uppercase tracking-wider mb-2">Ideal Candidates</h4>
+                <h4 className="text-xs font-mono text-[#393E46] uppercase tracking-wider mb-2 font-bold">Ideal Candidates</h4>
                 <div className="flex flex-wrap gap-1.5">
                   {book.whoShouldRead.map((item, idx) => (
-                    <span key={idx} className="px-2.5 py-1 rounded-lg bg-zinc-900 border border-white/5 text-[11px] text-zinc-300">
+                    <span key={idx} className="px-2.5 py-1 rounded-lg bg-[#DFD0B8] border border-[#948979]/20 text-[11px] text-[#393E46] font-bold shadow-sm">
                       {item}
                     </span>
                   ))}
@@ -269,19 +269,19 @@ export default function BookDetailsModal({
               {/* Related / Recommended books */}
               {relatedBooks.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-mono text-zinc-400 uppercase tracking-wider mb-3">Related Materials</h4>
+                  <h4 className="text-xs font-mono text-[#393E46] uppercase tracking-wider mb-3 font-bold">Related Materials</h4>
                   <div className="grid grid-cols-2 gap-3">
                     {relatedBooks.map((rel) => (
                       <div
                         key={rel.id}
                         onClick={() => onBookSelect(rel)}
-                        className="p-3 rounded-xl border border-white/5 bg-zinc-900/20 hover:bg-zinc-900/60 cursor-pointer transition-all flex items-center justify-between group"
+                        className="p-3.5 rounded-xl border border-[#948979]/20 bg-[#DFD0B8]/60 hover:bg-[#DFD0B8]/95 cursor-pointer transition-all flex items-center justify-between group shadow-sm"
                       >
                         <div>
-                          <p className="text-xs font-semibold text-zinc-200 group-hover:text-blue-400 transition-colors line-clamp-1">{rel.title}</p>
-                          <p className="text-[10px] font-mono text-zinc-500 mt-0.5">By {rel.author}</p>
+                          <p className="text-xs font-bold text-[#222831] group-hover:text-[#948979] transition-colors line-clamp-1">{rel.title}</p>
+                          <p className="text-[10px] font-mono text-[#393E46] mt-0.5">By {rel.author}</p>
                         </div>
-                        <ArrowRight size={14} className="text-zinc-500 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight size={14} className="text-[#393E46] group-hover:translate-x-1 transition-transform" />
                       </div>
                     ))}
                   </div>
