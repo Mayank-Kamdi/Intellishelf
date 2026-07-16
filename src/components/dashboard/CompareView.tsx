@@ -16,22 +16,22 @@ export default function CompareView({ books, compareList, onToggleCompare, onCle
 
   const renderComparisonRow = (label: string, field1: string | number, field2: string | number, type: 'text' | 'rating' | 'progress') => {
     return (
-      <div className="grid grid-cols-3 py-4 border-b border-white/5 text-sm font-sans items-center">
-        <span className="text-zinc-500 font-mono text-xs uppercase">{label}</span>
+      <div className="grid grid-cols-3 py-4 border-b border-[#948979]/15 text-sm font-sans items-center">
+        <span className="text-[#393E46] font-mono text-xs uppercase font-bold">{label}</span>
         
         {/* Book 1 Spec */}
-        <div className="text-zinc-200">
+        <div className="text-[#222831]">
           {type === 'rating' ? (
-            <div className="flex items-center gap-1 text-amber-400">
-              <Star size={14} className="fill-amber-400" />
+            <div className="flex items-center gap-1 text-amber-700 font-bold">
+              <Star size={14} className="fill-amber-700" />
               <span>{field1} / 5</span>
             </div>
           ) : type === 'progress' ? (
             <div className="flex items-center gap-2">
-              <div className="w-24 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500" style={{ width: `${field1}%` }} />
+              <div className="w-24 h-2 bg-[#DFD0B8] rounded-full overflow-hidden border border-[#948979]/15">
+                <div className="h-full bg-[#393E46]" style={{ width: `${field1}%` }} />
               </div>
-              <span className="text-xs text-zinc-400 font-mono">{field1}%</span>
+              <span className="text-xs text-[#393E46] font-mono">{field1}%</span>
             </div>
           ) : (
             <span>{field1}</span>
@@ -39,18 +39,18 @@ export default function CompareView({ books, compareList, onToggleCompare, onCle
         </div>
 
         {/* Book 2 Spec */}
-        <div className="text-zinc-200">
+        <div className="text-[#222831]">
           {type === 'rating' ? (
-            <div className="flex items-center gap-1 text-amber-400">
-              <Star size={14} className="fill-amber-400" />
+            <div className="flex items-center gap-1 text-amber-700 font-bold">
+              <Star size={14} className="fill-amber-700" />
               <span>{field2} / 5</span>
             </div>
           ) : type === 'progress' ? (
             <div className="flex items-center gap-2">
-              <div className="w-24 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-500" style={{ width: `${field2}%` }} />
+              <div className="w-24 h-2 bg-[#DFD0B8] rounded-full overflow-hidden border border-[#948979]/15">
+                <div className="h-full bg-[#948979]" style={{ width: `${field2}%` }} />
               </div>
-              <span className="text-xs text-zinc-400 font-mono">{field2}%</span>
+              <span className="text-xs text-[#393E46] font-mono">{field2}%</span>
             </div>
           ) : (
             <span>{field2}</span>
@@ -66,15 +66,15 @@ export default function CompareView({ books, compareList, onToggleCompare, onCle
       {/* Title */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-2">
-            AI Comparison Engine <GitCompare className="text-blue-400" />
+          <h1 className="text-2xl font-display font-bold text-[#222831] flex items-center gap-2">
+            AI Comparison Engine <GitCompare className="text-[#948979]" />
           </h1>
-          <p className="text-xs font-mono text-zinc-500">Contrast specifications, reading times, and topic coverage</p>
+          <p className="text-sm font-mono text-[#393E46]">Contrast specifications, reading times, and topic coverage</p>
         </div>
         {compareList.length > 0 && (
           <button 
             onClick={onClearCompare}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 text-xs font-mono text-red-400 transition-all"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-600/30 bg-red-600/5 hover:bg-red-600/10 text-xs font-mono text-red-600 transition-all font-bold cursor-pointer"
           >
             <Trash2 size={12} />
             <span>Reset comparison</span>
@@ -86,38 +86,38 @@ export default function CompareView({ books, compareList, onToggleCompare, onCle
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Left Book selector */}
-        <div className="glass-panel p-5 rounded-2xl relative">
-          <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-2">Reference Book</span>
+        <div className="glass-panel p-5 rounded-2xl relative bg-[#EADCB9] border border-white/20 shadow-sm">
+          <span className="text-[10px] font-mono text-[#393E46] uppercase tracking-wider block mb-2 font-bold">Reference Book</span>
           {compareList[0] ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-11 rounded bg-gradient-to-tr from-blue-500 to-indigo-500" style={{ backgroundColor: compareList[0].coverColor }} />
+                <div className="w-8 h-11 rounded shadow-[1px_1px_3px_rgba(0,0,0,0.15)]" style={{ backgroundColor: compareList[0].coverColor }} />
                 <div>
-                  <h3 className="font-semibold text-sm text-white line-clamp-1">{compareList[0].title}</h3>
-                  <p className="text-xs font-mono text-zinc-500">By {compareList[0].author}</p>
+                  <h3 className="font-semibold text-sm text-[#222831] line-clamp-1">{compareList[0].title}</h3>
+                  <p className="text-xs font-mono text-[#393E46]">By {compareList[0].author}</p>
                 </div>
               </div>
               <button 
                 onClick={() => onToggleCompare(compareList[0])}
-                className="p-1.5 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-red-400 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-black/5 text-[#393E46] hover:text-red-600 transition-colors cursor-pointer"
               >
                 <Trash2 size={14} />
               </button>
             </div>
           ) : (
             <div className="py-4 text-center">
-              <p className="text-xs text-zinc-500 italic mb-3">No reference book selected</p>
+              <p className="text-xs text-[#393E46] italic mb-3">No reference book selected</p>
               <select
                 onChange={(e) => {
                   const b = books.find(item => item.id === e.target.value);
                   if (b) onToggleCompare(b);
                 }}
-                className="w-full bg-zinc-900 border border-white/5 text-xs text-zinc-300 rounded-xl p-2 outline-none"
+                className="w-full bg-[#DFD0B8] border border-[#948979]/35 text-xs text-[#222831] rounded-xl p-2 outline-none cursor-pointer"
                 defaultValue=""
               >
                 <option value="" disabled>Select a book...</option>
                 {books.map(b => (
-                  <option key={b.id} value={b.id} disabled={compareList.some(c => c.id === b.id)}>{b.title}</option>
+                  <option key={b.id} value={b.id} disabled={compareList.some(c => c.id === b.id)} className="text-[#222831] bg-[#DFD0B8]">{b.title}</option>
                 ))}
               </select>
             </div>
@@ -125,38 +125,38 @@ export default function CompareView({ books, compareList, onToggleCompare, onCle
         </div>
 
         {/* Right Book selector */}
-        <div className="glass-panel p-5 rounded-2xl relative">
-          <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-2">Comparison Target</span>
+        <div className="glass-panel p-5 rounded-2xl relative bg-[#EADCB9] border border-white/20 shadow-sm">
+          <span className="text-[10px] font-mono text-[#393E46] uppercase tracking-wider block mb-2 font-bold">Comparison Target</span>
           {compareList[1] ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-11 rounded bg-gradient-to-tr from-indigo-500 to-cyan-500" style={{ backgroundColor: compareList[1].coverColor }} />
+                <div className="w-8 h-11 rounded shadow-[1px_1px_3px_rgba(0,0,0,0.15)]" style={{ backgroundColor: compareList[1].coverColor }} />
                 <div>
-                  <h3 className="font-semibold text-sm text-white line-clamp-1">{compareList[1].title}</h3>
-                  <p className="text-xs font-mono text-zinc-500">By {compareList[1].author}</p>
+                  <h3 className="font-semibold text-sm text-[#222831] line-clamp-1">{compareList[1].title}</h3>
+                  <p className="text-xs font-mono text-[#393E46]">By {compareList[1].author}</p>
                 </div>
               </div>
               <button 
                 onClick={() => onToggleCompare(compareList[1])}
-                className="p-1.5 rounded-lg hover:bg-white/5 text-zinc-500 hover:text-red-400 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-black/5 text-[#393E46] hover:text-red-600 transition-colors cursor-pointer"
               >
                 <Trash2 size={14} />
               </button>
             </div>
           ) : (
             <div className="py-4 text-center">
-              <p className="text-xs text-zinc-500 italic mb-3">No target book selected</p>
+              <p className="text-xs text-[#393E46] italic mb-3">No target book selected</p>
               <select
                 onChange={(e) => {
                   const b = books.find(item => item.id === e.target.value);
                   if (b) onToggleCompare(b);
                 }}
-                className="w-full bg-zinc-900 border border-white/5 text-xs text-zinc-300 rounded-xl p-2 outline-none"
+                className="w-full bg-[#DFD0B8] border border-[#948979]/35 text-xs text-[#222831] rounded-xl p-2 outline-none cursor-pointer"
                 defaultValue=""
               >
                 <option value="" disabled>Select a book...</option>
                 {books.map(b => (
-                  <option key={b.id} value={b.id} disabled={compareList.some(c => c.id === b.id)}>{b.title}</option>
+                  <option key={b.id} value={b.id} disabled={compareList.some(c => c.id === b.id)} className="text-[#222831] bg-[#DFD0B8]">{b.title}</option>
                 ))}
               </select>
             </div>
@@ -167,11 +167,11 @@ export default function CompareView({ books, compareList, onToggleCompare, onCle
 
       {/* Specs layout */}
       {compareList.length === 2 ? (
-        <div className="glass-panel p-6 rounded-3xl mt-4">
-          <div className="grid grid-cols-3 border-b border-white/10 pb-3 font-mono text-xs text-zinc-400 uppercase tracking-wider">
+        <div className="glass-panel p-6 rounded-3xl mt-4 bg-[#EADCB9] border border-white/20 shadow-sm">
+          <div className="grid grid-cols-3 border-b border-[#948979]/25 pb-3 font-mono text-xs text-[#393E46] uppercase tracking-wider font-bold">
             <span>Parameter</span>
-            <span className="text-blue-400 truncate">{compareList[0].title}</span>
-            <span className="text-indigo-400 truncate">{compareList[1].title}</span>
+            <span className="text-[#222831] truncate font-extrabold">{compareList[0].title}</span>
+            <span className="text-[#948979] truncate font-extrabold">{compareList[1].title}</span>
           </div>
 
           <div className="flex flex-col">
@@ -186,19 +186,19 @@ export default function CompareView({ books, compareList, onToggleCompare, onCle
           </div>
           
           {/* AI Comparison Summary Card */}
-          <div className="mt-6 p-4 rounded-2xl bg-blue-950/15 border border-blue-500/10 flex gap-3 text-xs leading-relaxed">
-            <Sparkles size={18} className="text-cyan-400 shrink-0 mt-0.5" />
+          <div className="mt-6 p-4 rounded-2xl bg-[#948979]/15 border border-[#948979]/25 flex gap-3 text-xs leading-relaxed">
+            <Sparkles size={18} className="text-[#393E46] shrink-0 mt-0.5" />
             <div>
-              <span className="font-mono text-cyan-400 uppercase font-bold block mb-1">JARVIS Cross-Evaluation Analysis</span>
-              <p className="text-zinc-300">
-                "{compareList[0].title}" operates at a <strong className="text-zinc-100">{compareList[0].difficulty}</strong> learning curve while focusing heavily on {compareList[0].category}. By contrast, "{compareList[1].title}" requires <strong className="text-zinc-100">{compareList[1].difficulty}</strong> level comprehension. Scholars should start with {compareList[0].pages > compareList[1].pages ? compareList[1].title : compareList[0].title} to build basic context prior to tackling theoretical deep dives.
+              <span className="font-mono text-[#222831] uppercase font-bold block mb-1">JARVIS Cross-Evaluation Analysis</span>
+              <p className="text-[#393E46]">
+                "{compareList[0].title}" operates at a <strong className="text-[#222831]">{compareList[0].difficulty}</strong> learning curve while focusing heavily on {compareList[0].category}. By contrast, "{compareList[1].title}" requires <strong className="text-[#222831]">{compareList[1].difficulty}</strong> level comprehension. Scholars should start with {compareList[0].pages > compareList[1].pages ? compareList[1].title : compareList[0].title} to build basic context prior to tackling theoretical deep dives.
               </p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="h-64 glass-panel rounded-3xl flex flex-col items-center justify-center text-center p-6 border-dashed border-white/10">
-          <p className="text-sm text-zinc-500 max-w-xs">
+        <div className="h-64 glass-panel rounded-3xl flex flex-col items-center justify-center text-center p-6 border-dashed border-[#948979]/35 bg-[#EADCB9]/40 shadow-sm">
+          <p className="text-sm text-[#393E46] max-w-xs font-bold leading-relaxed">
             Please select two books from the selectors above to initialize the AI side-by-side evaluation comparison engine.
           </p>
         </div>
